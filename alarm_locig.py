@@ -1,6 +1,5 @@
-from tkinter import *
+
 import datetime
-from tkinter import messagebox
 from tkinter import filedialog
 import os
 
@@ -32,8 +31,9 @@ class AlarmClock:
         
         if self.is_valid_time(user_time):
             self.alarm_time = user_time
+            return True
         else:
-            info_label.config(text='!!!')
+            return False
 
         
     def turn_on(self):
@@ -42,10 +42,9 @@ class AlarmClock:
 
     def turn_off(self):
         self.is_active = False
-        info_label.config(text='alarm stopped')
 
     
-    def  check_alarm(self):
+    def  check_alarm(self, root):
 
         current_time = datetime.datetime.now()
         current_time_str = current_time.strftime('%H:%M')
@@ -54,7 +53,7 @@ class AlarmClock:
             os.startfile(self.sound_file)
             self.is_active = False
         else:
-            root.after(1000, self.check_alarm)
+            root.after(1000, lambda: self.check_alarm(root))
 
     def choose_sound(self):
 
@@ -66,48 +65,3 @@ class AlarmClock:
                 ]
         )
         self.sound_file = sound_path
-        info_sound_label.config(text=self.sound_file)
-    
-
-
-def start_program():
-    user_time = alarm_entry.get()
-    my_clock.set_alarm(user_time)
-    my_clock.turn_on()
-    my_clock.check_alarm()
-
-
-
-root = Tk()
-root.geometry('500x300')
-
-my_clock = AlarmClock('?.mp3')
-
-alarm_label = Label(root, text='Alarm time:')
-alarm_label.pack()
-
-alarm_entry = Entry(root)
-alarm_entry.pack()
-
-alarm_button = Button(root, text='start alarm', command=start_program)
-alarm_button.pack()
-
-alarm_stop_button = Button(root, text='stop alarm', command=my_clock.turn_off)
-alarm_stop_button.pack()
-
-info_label = Label(root, text='')
-info_label.pack()
-
-ghost_label1 = Label(root, text='')
-ghost_label1.pack()
-
-ghost_label2 = Label(root, text='')
-ghost_label2.pack()
-
-choose_sound_button = Button(root, text='choose sound', command=my_clock.choose_sound)
-choose_sound_button.pack()
-
-info_sound_label = Label(root, text='not sound selected')
-info_sound_label.pack()
-
-root.mainloop()
